@@ -55,3 +55,8 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# Eclipse workspace and project related files
+.metadata
+KPS/.pydevproject
+KPS/.project
