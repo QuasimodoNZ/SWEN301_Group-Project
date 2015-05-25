@@ -19,6 +19,9 @@ Easiest to install with pip, type this into the command line. ```pip install Dja
 <h3>Bootstrap</h3>
 Easiest to install with pip, type this into the command line. ```pip install django-bootstrap3```
 
+<h3>Bootstrap for admin</h3>
+Easiest to install with pip, type this into the command line. ```pip install django-admin-bootstrapped```
+
 <h2>How to run it</h2>
 From the root directory in a command line ```python /KPS/manage.py runserver [port no.]```
 
