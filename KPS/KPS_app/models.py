@@ -1,5 +1,3 @@
-from django.db import models
-
 # Create your models here.
 from django.db import models
 
@@ -29,9 +27,9 @@ class Company(models.Model):
 
 class BusinessEvent(models.Model):
     recorded_time = models.DateTimeField('recorded time', auto_now_add=True)
-    to_city = models.ForeignKey(City)
-    from_city = models.ForeignKey(City)
-    priority = models.CharField(choices=PRIORITIES)
+    to_city = models.ForeignKey(City, related_name='%(app_label)s_%(class)s_destination')
+    from_city = models.ForeignKey(City, related_name='%(app_label)s_%(class)s_source')
+    priority = models.CharField(choices=PRIORITIES, max_length=4)
 
     def asXML(self):
         return "foo"
@@ -51,7 +49,7 @@ class TransportCostUpdate(BusinessEvent):
     max_volume = models.IntegerField('maximum volume in cubic centimeters')
     duration = models.IntegerField('duration of trip in hours')
     frequency = models.IntegerField('number of hours between each departure')
-    day = models.CharField('day of the week the transport departs', choices=DAYS)
+    day = models.CharField('day of the week the transport departs', choices=DAYS, max_length=8)
     is_active = models.BooleanField('if the model is currently active')
 
 class PriceUpdate(BusinessEvent):
