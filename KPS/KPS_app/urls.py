@@ -9,5 +9,6 @@ urlpatterns = patterns('',
     url(r'^update-price/$', login_required(views.CustomerUpdate.as_view()), name='update_price'),
     url(r'^update-cost/$', login_required(views.TransportUpdate.as_view()), name='update_cost'),
     url(r'^discontinue-transport/$', login_required(views.TransportDiscontinued.as_view()), name='discontinue_transport'),
-    
+#     url(r'^cities-and-companies/$', login_required(views.CityAndCompanyView.as_view()), name='city_and_company'),
+    url(r'^cities-and-companies/$', login_required(views.add_cities_and_companies), name='city_and_company'),
 )

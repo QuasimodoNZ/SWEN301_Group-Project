@@ -2,34 +2,46 @@
 from django.db import models
 
 PRIORITIES = (
-    (0, 'Land'),
-    (1, 'Sea'),
-    (2, 'Air'),
+    ('Land', 'Land'),
+    ('Sea', 'Sea'),
+    ('Air', 'Air'),
 )
 DAYS = (
-    (0, 'Monday'),
-    (1, 'Tuesday'),
-    (2, 'Wednesday'),
-    (3, 'Thursday'),
-    (4, 'Friday'),
-    (5, 'Saturday'),
-    (6, 'Sunday'),
+    ('Monday', 'Monday'),
+    ('Tuesday', 'Tuesday'),
+    ('Wednesday', 'Wednesday'),
+    ('Thursday', 'Thursday'),
+    ('Friday', 'Friday'),
+    ('Saturday', 'Saturday'),
+    ('Sunday', 'Sunday'),
 )
 
 class City(models.Model):
     city_name = models.CharField(max_length=200)
+
+    class Meta:
+        verbose_name_plural='Cities'
 
     def __str__(self):
         return self.city_name
 
 class Company(models.Model):
     company_name = models.CharField(max_length=200)
+    
+    class Meta:
+        verbose_name_plural='Companies'
+    
+    def __str__(self):
+        return self.company_name
 
 class BusinessEvent(models.Model):
     recorded_time = models.DateTimeField('recorded time', auto_now_add=True)
     to_city = models.ForeignKey(City, related_name='%(app_label)s_%(class)s_destination')
     from_city = models.ForeignKey(City, related_name='%(app_label)s_%(class)s_source')
     priority = models.CharField(choices=PRIORITIES, max_length=4)
+
+    def __str__(self):
+        return '{}-{}:{}'.format(self.from_city, self.to_city, self.priority)
 
     def asXML(self):
         return "foo"
@@ -40,6 +52,9 @@ class BusinessEvent(models.Model):
 class MailDelivery(BusinessEvent):
     weight = models.IntegerField('weight in grams')
     volume = models.IntegerField('volume in cubic centimeter')
+    
+    class Meta:
+        verbose_name_plural='Mail Deliveries'
 
 class TransportCostUpdate(BusinessEvent):
     company = models.ForeignKey(Company)
@@ -57,7 +72,7 @@ class PriceUpdate(BusinessEvent):
     volume_cost = models.IntegerField('cost per cubic centimeter')
 
 class TransportDiscontinued(BusinessEvent):
-    company = models.CharField(max_length=200)
+    company = models.ForeignKey(Company)
 
 
 
