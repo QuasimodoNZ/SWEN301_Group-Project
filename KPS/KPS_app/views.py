@@ -10,8 +10,14 @@ from django.template import RequestContext
 # Create your views here.
 class Dashboard(TemplateView):
     template_name = "KPS_app/dashboard.html"
-    model = models.BusinessEvent
-    rev_total = 200000
+    def get_context_data(self, **kwargs):
+        rtn = TemplateView.get_context_data(self, **kwargs)
+        rtn['event_total'] = get_event_log()
+        rtn['table1'] = [("Wellington",   "Wellington", "Land", "123", "456"),
+                         ("Wellington",   "Auckland",   "Air",  "456", "789"),
+                         ("Christchurch", "Auckland",   "Sea",  "234", "567"),
+                         ("Wellington",   "Auckland",   "Land", "57",  "6789")]
+        return rtn
 
 class DeliverMail(CreateView):
     template_name = 'KPS_app/deliver_mail.html'
@@ -54,12 +60,12 @@ def get_network(time=None):
         
 def get_event_log(time=None):
     if time == None:
-        time = datetime.datetime.now()
+        time = datetime.now()
     
-    deliveries = models.MailDelivery.objects.filter(recorded_time__lte=time)
-    prices = models.PriceUpdate.objects.filter(recorded_time__lte=time)
-    costs = models.TransportCostUpdate.objects.filter(recorded_time__lte=time)
-    discontinues = models.TransportDiscontinued.objects.filter(recorded_time__lte=time)
+    deliveries = models.MailDelivery.objects.filter(recorded_time__lte=time).count()
+    prices = models.PriceUpdate.objects.filter(recorded_time__lte=time).count()
+    costs = models.TransportCostUpdate.objects.filter(recorded_time__lte=time).count()
+    discontinues = models.TransportDiscontinued.objects.filter(recorded_time__lte=time).count()
     
     events = deliveries + prices + costs + discontinues
     
