@@ -6,7 +6,9 @@ from KPS_app import models
 # Create your views here.
 class Dashboard(TemplateView):
     template_name = "KPS_app/dashboard.html"
-    
+    model = models.BusinessEvent
+    rev_total = 200000
+
 class DeliverMail(CreateView):
     template_name = 'KPS_app/deliver_mail.html'
     model = models.MailDelivery

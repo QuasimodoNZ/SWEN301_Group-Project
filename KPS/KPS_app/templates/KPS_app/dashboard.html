@@ -2,6 +2,51 @@
 
 {% block title %}Dashboard{% endblock %}
 {% block content %}
-<h1>KPS Dashboard</h1>
+<head>
+<link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+</head>
 
+<h1>KPS Dashboard</h1>
+<div class="container">
+	<div class="row-fluid">
+		<div class="span4" id="revenue_total">
+			<div class="well" id="revenue_well">
+				Revenue Total
+				<h1>{{rev_total}}</h1>
+			</div>
+		</div>
+		<div class="span4" id="expenditure_total">
+			<div class="well" id="expenditure_well">
+				Expenditure total
+				<h1>numbers</h1>
+			</div>
+		</div>
+		<div class="span4" id="event_total">
+			<div class="well" id="event_well">
+				Event total
+				<h1>numbers</h1>
+			</div>
+		</div>
+	</div>
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="tabbable">
+				<ul class="nav nav-tabs" id="main_tabs" >
+					<li class="active">Average delivery times</li>
+						<a href=""></a>
+					<li class="active">Critial routes</li>
+						<a href="#critical_route_table"></a>
+				</ul>
+				<div class="tab-content">
+					<div class"table table-boardered table-striped" id="critical_route_tabl" id="average_delivery_times">
+						Average delivery table goes here
+					</div>
+					<div class="table table-boardered table-striped" id="critical_route_table"> 
+						Critial route table goes here				
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 {% endblock %}
