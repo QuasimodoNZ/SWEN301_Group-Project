@@ -20,21 +20,25 @@ class Dashboard(TemplateView):
         return rtn
 
 class DeliverMail(CreateView):
+    success_url = '/'
     template_name = 'KPS_app/deliver_mail.html'
     model = models.MailDelivery
     fields = ['from_city', 'to_city', 'priority', 'weight', 'volume']
     
 class CustomerUpdate(CreateView):
+    success_url = '/'
     template_name = 'KPS_app/customer_update.html'
     model = models.PriceUpdate
     fields = ['from_city', 'to_city', 'priority', 'weight_cost', 'volume_cost']
     
 class TransportUpdate(CreateView):
+    success_url = '/'
     template_name = 'KPS_app/transport_update.html'
     model = models.TransportCostUpdate
     fields = ['from_city', 'to_city', 'priority', 'company', 'weight_cost', 'volume_cost', 'max_weight', 'max_volume', 'duration', 'frequency', 'day', 'is_active']
 
 class TransportDiscontinued(CreateView):
+    success_url = '/'
     template_name = 'KPS_app/transport_discontinue.html'
     model = models.TransportDiscontinued
     fields = ['from_city', 'to_city', 'priority', 'company']
