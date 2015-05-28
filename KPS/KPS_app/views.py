@@ -13,10 +13,10 @@ class Dashboard(TemplateView):
     def get_context_data(self, **kwargs):
         rtn = TemplateView.get_context_data(self, **kwargs)
         rtn['event_total'] = get_event_log()
-        rtn['table1'] = [("Wellington",   "Wellington", "Land", "123", "456"),
-                         ("Wellington",   "Auckland",   "Air",  "456", "789"),
-                         ("Christchurch", "Auckland",   "Sea",  "234", "567"),
-                         ("Wellington",   "Auckland",   "Land", "57",  "6789")]
+        rtn['table1'] = [("Wellington",   "Wellington", "Land", "456", "127"),
+                         ("Wellington",   "Auckland",   "Air",  "789", "180"),
+                         ("Christchurch", "Auckland",   "Sea",  "3432", "1258"),
+                         ("Wellington",   "Auckland",   "Land", "2432",  "565")]
         return rtn
 
 class DeliverMail(CreateView):
