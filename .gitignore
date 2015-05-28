@@ -60,3 +60,6 @@ target/
 .metadata
 KPS/.pydevproject
 KPS/.project
+
+# OS X file
+*.OS_Store
