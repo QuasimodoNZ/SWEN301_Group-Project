@@ -15,21 +15,25 @@ class DeliverMail(CreateView):
     template_name = 'KPS_app/deliver_mail.html'
     model = models.MailDelivery
     fields = ['from_city', 'to_city', 'priority', 'weight', 'volume']
+    success_url = '/'
     
 class CustomerUpdate(CreateView):
     template_name = 'KPS_app/customer_update.html'
     model = models.PriceUpdate
     fields = ['from_city', 'to_city', 'priority', 'weight_cost', 'volume_cost']
-    
+    success_url = '/'
+
 class TransportUpdate(CreateView):
     template_name = 'KPS_app/transport_update.html'
     model = models.TransportCostUpdate
     fields = ['from_city', 'to_city', 'priority', 'company', 'weight_cost', 'volume_cost', 'max_weight', 'max_volume', 'duration', 'frequency', 'day', 'is_active']
+    success_url = '/'
 
 class TransportDiscontinued(CreateView):
     template_name = 'KPS_app/transport_discontinue.html'
     model = models.TransportDiscontinued
     fields = ['from_city', 'to_city', 'priority', 'company']
+    success_url = '/'
 
 def add_cities_and_companies(request):
     if request.method == "POST":
