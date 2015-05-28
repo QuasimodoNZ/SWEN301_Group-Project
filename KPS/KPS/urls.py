@@ -2,8 +2,6 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 
-from KPS_app import urls
-
 urlpatterns = [
     # Examples:
     # url(r'^$', 'KPS.views.home', name='home'),
