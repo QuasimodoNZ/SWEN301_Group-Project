@@ -2,6 +2,110 @@
 
 {% block title %}Dashboard{% endblock %}
 {% block content %}
+<head>
+<link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+</head>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script type="text/javascript">
+// $(document).ready(function(){ 
+//     $("#main_tabs a").click(function(e){
+//     	e.preventDefault();
+//     	$(this).tab('show');
+//     });
+// });
+</script>
 <h1>KPS Dashboard</h1>
-
+<div class="container">
+	<div class="row-fluid">
+		<div class="col-mid-4" id="revenue_total">
+			<div class="well" id="revenue_well">
+				Revenue Total
+				<h1>$7109</h1>
+			</div>
+		</div>
+		<div class="col-mid-4" id="expenditure_total">
+			<div class="well" id="expenditure_well">
+				Expenditure total
+				<h1>$2130</h1>
+			</div>
+		</div>
+		<div class="col-mid-4" id="event_total">
+			<div class="well" id="event_well">
+				Event total
+				<h1>4</h1>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row-fluid">
+		<ul class="nav nav-tabs" id="main_tabs" >
+			<li class="active">
+				<a data-toggle="tab" href="#average_delivery_times">Events</a>
+			</li>
+			<li>
+				<a data-toggle="tab" href="#critical_route_table">Event Duration</a>
+			</li>
+		</ul>
+	</div>
+	<div class="tab-content">
+			<div id="average_delivery_times" class="tab-pane fade in active">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>From</th>
+							<th>To</th>
+							<th>Priority</th>
+							<th>Revenue</th>
+							<th>Expenditure</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for row in table1%}
+							<tr>
+								<td>{{row.0}}</td>
+								<td>{{row.1}}</td>
+								<td>{{row.2}}</td>
+								<td>${{row.3}}</td>
+								<td>${{row.4}}</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+			<div id="critical_route_table" class="tab-pane fade">
+				<table class="table table-striped" id="critical_route_table">
+					<thead>
+						<tr>
+							<th>From</th>
+							<th>To</th>
+							<th>Duration</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Wellington</td>
+							<td>Wellington</td>
+							<td>2 hours 24 minutes</td>
+						</tr>
+						<tr>
+							<td>Wellington</td>
+							<td>Auckland</td>
+							<td>4 hours 12 minutes</td>
+						</tr>
+						<tr>
+							<td>Christchurch</td>
+							<td>Auckland</td>
+							<td>7 days 5 hours</td>
+						</tr>
+						<tr>
+							<td>Wellington</td>
+							<td>Auckland</td>
+							<td>1 day 6 hours 32 minutes</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			</div>
+</div>
 {% endblock %}

@@ -10,30 +10,38 @@ from django.template import RequestContext
 # Create your views here.
 class Dashboard(TemplateView):
     template_name = "KPS_app/dashboard.html"
-    
+    def get_context_data(self, **kwargs):
+        rtn = TemplateView.get_context_data(self, **kwargs)
+        rtn['event_total'] = get_event_log()
+        rtn['table1'] = [("Wellington",   "Wellington", "Land", "456", "127"),
+                         ("Wellington",   "Auckland",   "Air",  "789", "180"),
+                         ("Christchurch", "Auckland",   "Sea",  "3432", "1258"),
+                         ("Wellington",   "Auckland",   "Land", "2432",  "565")]
+        return rtn
+
 class DeliverMail(CreateView):
+    success_url = '/'
     template_name = 'KPS_app/deliver_mail.html'
     model = models.MailDelivery
     fields = ['from_city', 'to_city', 'priority', 'weight', 'volume']
-    success_url = '/'
-    
+
 class CustomerUpdate(CreateView):
+    success_url = '/'
     template_name = 'KPS_app/customer_update.html'
     model = models.PriceUpdate
     fields = ['from_city', 'to_city', 'priority', 'weight_cost', 'volume_cost']
-    success_url = '/'
 
 class TransportUpdate(CreateView):
+    success_url = '/'
     template_name = 'KPS_app/transport_update.html'
     model = models.TransportCostUpdate
     fields = ['from_city', 'to_city', 'priority', 'company', 'weight_cost', 'volume_cost', 'max_weight', 'max_volume', 'duration', 'frequency', 'day', 'is_active']
-    success_url = '/'
 
 class TransportDiscontinued(CreateView):
+    success_url = '/'
     template_name = 'KPS_app/transport_discontinue.html'
     model = models.TransportDiscontinued
     fields = ['from_city', 'to_city', 'priority', 'company']
-    success_url = '/'
 
 def add_cities_and_companies(request):
     if request.method == "POST":
@@ -53,18 +61,18 @@ def add_cities_and_companies(request):
 
 def get_network(time=None):
     events = get_event_log(time)
-        
+
 def get_event_log(time=None):
     if time == None:
-        time = datetime.datetime.now()
-    
-    deliveries = models.MailDelivery.objects.filter(recorded_time__lte=time)
-    prices = models.PriceUpdate.objects.filter(recorded_time__lte=time)
-    costs = models.TransportCostUpdate.objects.filter(recorded_time__lte=time)
-    discontinues = models.TransportDiscontinued.objects.filter(recorded_time__lte=time)
-    
+        time = datetime.now()
+
+    deliveries = models.MailDelivery.objects.filter(recorded_time__lte=time).count()
+    prices = models.PriceUpdate.objects.filter(recorded_time__lte=time).count()
+    costs = models.TransportCostUpdate.objects.filter(recorded_time__lte=time).count()
+    discontinues = models.TransportDiscontinued.objects.filter(recorded_time__lte=time).count()
+
     events = deliveries + prices + costs + discontinues
-    
-    
-    
+
+
+
     return events
