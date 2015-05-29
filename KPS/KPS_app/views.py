@@ -17,6 +17,11 @@ class Dashboard(TemplateView):
         
         rtn['events'] = get_event_log()
         
+        source = models.City.objects.get(city_name='Auckland')
+        destination = models.City.objects.get(city_name='Wellington')
+        
+        rtn['path'] = Network().find_path(source, destination, 'land')
+        
         return rtn
     
     
@@ -83,8 +88,12 @@ class Network():
                             node_links[i] = event
                             
                 else:
-                    self.links[event.from_city].append(event)
-                    self.links[event.to_city].append(event)
+                    if event.from_city not in self.nodes:
+                        self.nodes[event.from_city] = []
+                    self.nodes[event.from_city].append(event)
+                    if event.to_city not in self.nodes:
+                        self.nodes[event.to_city] = []
+                    self.nodes[event.to_city].append(event)
                 self.links[t] = event
 
             elif type(event) == models.TransportDiscontinued: # got to remove it from the network
@@ -98,17 +107,28 @@ class Network():
     def find_path(self, source, destination, priority):
         '''Return list of TransportUpdateCost'''
         
-        for city, links in self.nodes.iteritems():
-            links.sortt(key=lambda x: x.volume_cost*x.weight_cost)
+        for links in self.nodes.itervalues():
+            links.sort(key=lambda x: x.volume_cost*x.weight_cost)
         
         visited = []
-        q = deque([source])
-        while len(q) >0:
-            n = q.popleft()
-            
-            
+        queue = [(0, source, None, None)] # [(priority or cost int, node City, from tuple, using TransportRoute), ...]
+        while len(queue) > 0:
+            t = queue.pop(0)
+            if t[1] == destination:
+                path = []
+                while t[2] != None:
+                    path.append(t[3])
+                    t = t[2]
+                return list(reversed(path))
+            elif t[1] in visited:
+                continue
+            visited.append(t)
+            for link in self.nodes[t[1]]:
+                queue.append((t[0] + link.volume_cost*link.weight_cost, link.get_opposite(t[1]), t, link))
+            queue.sort()
         
-        pass
+        # Mustn't have found a path 
+        return None
                                 
 def as_tuple(event):
     return (event.from_city, event.to_city, event.company, event.priority)
