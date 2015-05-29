@@ -40,7 +40,8 @@ class Dashboard(TemplateView):
             rtn['customer_pricings'].append({
                 'from':pricing.from_city, 'to':pricing.to_city, 'priority':pricing.priority,
                 'revenue':dre['revenue'], 'expenditure':dre['expenditure'],
-                'duration':dre['duration']
+                'duration':dre['duration'],
+                'status': 'warning' if dre['expenditure'] > dre['revenue'] else ''
                 })        
         
         return rtn

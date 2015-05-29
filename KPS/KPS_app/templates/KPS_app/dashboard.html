@@ -62,7 +62,7 @@
 					</thead>
 					<tbody>
 						{% for pricing in customer_pricings%}
-							<tr>
+							<tr class="{{pricing.status}}">
 								<td>{{ pricing.from }}</td>
 								<td>{{ pricing.to }}</td>
 								<td>{{ pricing.priority }}</td>
