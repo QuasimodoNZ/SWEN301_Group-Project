@@ -61,13 +61,13 @@
 						</tr>
 					</thead>
 					<tbody>
-						{% for row in table1%}
+						{% for pricing in customer_pricings%}
 							<tr>
-								<td>{{row.0}}</td>
-								<td>{{row.1}}</td>
-								<td>{{row.2}}</td>
-								<td>${{row.3}}</td>
-								<td>${{row.4}}</td>
+								<td>{{ pricing.from }}</td>
+								<td>{{ pricing.to }}</td>
+								<td>{{ pricing.priority }}</td>
+								<td>${{ pricing.revenue }}</td>
+								<td>${{ pricing.expenditure }}</td>
 							</tr>
 						{% endfor %}
 					</tbody>
@@ -83,26 +83,13 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr>
-							<td>Wellington</td>
-							<td>Wellington</td>
-							<td>2 hours 24 minutes</td>
-						</tr>
-						<tr>
-							<td>Wellington</td>
-							<td>Auckland</td>
-							<td>4 hours 12 minutes</td>
-						</tr>
-						<tr>
-							<td>Christchurch</td>
-							<td>Auckland</td>
-							<td>7 days 5 hours</td>
-						</tr>
-						<tr>
-							<td>Wellington</td>
-							<td>Auckland</td>
-							<td>1 day 6 hours 32 minutes</td>
-						</tr>
+						{% for pricing in customer_pricings%}
+							<tr>
+								<td>{{ pricing.from }}</td>
+								<td>{{ pricing.to }}</td>
+								<td>{{ pricing.duration }}</td>
+							</tr>
+						{% endfor %}
 					</tbody>
 				</table>
 			</div>
