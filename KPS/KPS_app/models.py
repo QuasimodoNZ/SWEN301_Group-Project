@@ -64,7 +64,7 @@ class TransportCostUpdate(BusinessEvent):
     max_volume = models.IntegerField('maximum volume in cubic centimeters')
     duration = models.IntegerField('duration of trip in hours')
     frequency = models.IntegerField('number of hours between each departure')
-    day = models.CharField('day of the week the transport departs', choices=DAYS, max_length=8)
+    day = models.CharField('day of the week the transport departs', choices=DAYS, max_length=9)
     is_active = models.BooleanField('if the model is currently active')
     
     def get_opposite(self, city):
