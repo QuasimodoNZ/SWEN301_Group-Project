@@ -7,7 +7,7 @@ urlpatterns = [
     # url(r'^$', 'KPS.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-    url(r'^accounts/login/$', auth_views.login, name='login'),
+    url(r'^admin/login/$', auth_views.login, name='login'),
     url(r'^admin/', include(admin.site.urls), name='admin'),
     url(r'^', include('KPS_app.urls')),
 ]
