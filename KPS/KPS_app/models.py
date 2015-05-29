@@ -66,6 +66,14 @@ class TransportCostUpdate(BusinessEvent):
     frequency = models.IntegerField('number of hours between each departure')
     day = models.CharField('day of the week the transport departs', choices=DAYS, max_length=8)
     is_active = models.BooleanField('if the model is currently active')
+    
+    def get_opposite(self, city):
+        if city == self.from_city:
+            return self.to_city
+        elif city == self.to_city:
+            return self.from_city
+        else:
+            return None
 
 class PriceUpdate(BusinessEvent):
     weight_cost = models.IntegerField('cost per gram')

@@ -22,6 +22,8 @@ class Dashboard(TemplateView):
         
         rtn['path'] = Network().find_path(source, destination, 'land')
         
+        rtn['travel_time'] = sum(route.duration for route in rtn['path'])
+        
         return rtn
     
     
