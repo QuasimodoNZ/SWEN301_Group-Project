@@ -6,6 +6,8 @@ from KPS_app.forms import CityForm, CompanyForm
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.core import serializers
+from django.http import HttpResponse
 
 # Create your views here.
 class Dashboard(TemplateView):
@@ -68,3 +70,13 @@ def get_event_log(time=None):
     
     
     return events
+
+def get_xml(request):
+    xml = ("<events>" + 
+        serializers.serialize('xml', models.MailDelivery.objects.all()) +
+        serializers.serialize('xml', models.TransportCostUpdate.objects.all()) +
+        serializers.serialize('xml', models.PriceUpdate.objects.all()) +
+        serializers.serialize('xml', models.TransportDiscontinued.objects.all()) +
+        "</events>"
+    )
+    return HttpResponse(xml)

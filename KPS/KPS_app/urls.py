@@ -11,4 +11,5 @@ urlpatterns = patterns('',
     url(r'^discontinue-transport/$', login_required(views.TransportDiscontinued.as_view()), name='discontinue_transport'),
 #     url(r'^cities-and-companies/$', login_required(views.CityAndCompanyView.as_view()), name='city_and_company'),
     url(r'^cities-and-companies/$', login_required(views.add_cities_and_companies), name='city_and_company'),
+    url(r'^xml/$', login_required(views.get_xml), name='xml'),
 )
