@@ -4,7 +4,13 @@
 {% block content %}
 <h1>Deliver Mail</h1>
 <form action="" method="post">{% csrf_token %}
-	{{ form.as_p }}
-	<input class="btn btn-primary" type="submit" value="Create" />
+  {{ delivery_form.as_p }}
+  <label for "price_dropdown">Price:</label>
+  <select name="price_dropdown">
+    <option value="" selected="selected">---------</option>
+    {% for price in price_updates%}
+      <option value="1">{{price}}</option>
+    {% endfor %}
+  </select>
 </form>
 {% endblock %}
