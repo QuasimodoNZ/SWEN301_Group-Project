@@ -35,15 +35,17 @@ class Dashboard(TemplateView):
 def delivery_mail(request):
     price_updates = models.PriceUpdate.objects.all()
     if request.method == "POST":
+        print("POST REQUEST: ")
         print(request.POST)
+        print("*************")
         mail_delivery_form = MailDeliveryForm(request.POST, instance=models.MailDelivery())
         if mail_delivery_form.is_valid():
-            if not request.POST['delivery_form'] == '':
+            if not request.POST['delivery_form'] == '' and len(models.MailDelivery.objects.filter(weight=request.POST['weight'])) == 0 and len(models.MailDelivery.objects.filter(volume=request.POST['volume'])) == 0:
                 mail_delivery_form.save()
             return HttpResponseRedirect('/')
     else:
         mail_delivery_form = MailDeliveryForm(instance=models.MailDelivery())
-    return render_to_response('KPS_app/deliver_mail.html', {'price_updates': price_updates, 'delivery_form': mail_delivery_form}, RequestContext(request))
+    return render_to_response('KPS_app/deliver_mail.html', {'price_updates_selection': price_updates, 'delivery_form': mail_delivery_form}, RequestContext(request))
 
 class CustomerUpdate(CreateView):
     success_url = '/'
@@ -65,7 +67,6 @@ class TransportDiscontinued(CreateView):
 
 def add_cities_and_companies(request):
     if request.method == "POST":
-        print(request.POST)
         city_form = CityForm(request.POST, instance=models.City())
         company_form = CompanyForm(request.POST, instance=models.Company())
         if city_form.is_valid() and company_form.is_valid():

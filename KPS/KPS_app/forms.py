@@ -25,13 +25,16 @@ class CompanyForm(forms.ModelForm):
         model = models.Company
         fields = ['company_name']
 
+# class MailDeliveryForm(forms.ModelForm, BusinessEvent):
 class MailDeliveryForm(forms.ModelForm):
-    # def __init__(self, *args, **kwargs):
-    #     super(MailDeliveryForm, self).__init__(*args, **kwargs)
-    #     self.fields['from_city', 'to_city', 'priority','weight', 'volume'].required = False
+    def __init__(self, *args, **kwargs):
+        super(MailDeliveryForm, self).__init__(*args, **kwargs)
+        price_update = self.fields['price_update_selection']
+        models.PriceUpdate.objects.get(pk=post.FIELD_NAME)
+        self.fields['from_city', 'to_city', 'priority','weight', 'volume'].required = False
 
     class Meta:
         model = models.MailDelivery
-        fields = ['from_city', 'to_city', 'priority','weight', 'volume']
+        fields = ['weight', 'volume']
 
 

@@ -8,9 +8,11 @@
   <label for "price_dropdown">Price:</label>
   <select name="price_dropdown">
     <option value="" selected="selected">---------</option>
-    {% for price in price_updates%}
-      <option value="1">{{price}}</option>
+
+    {% for price in price_updates_selection %}
+      <option value={{forloop.counter0}}> {{price}} </option>
     {% endfor %}
   </select>
+  <input class="btn btn-primary" type="submit" value="Create" />
 </form>
 {% endblock %}
