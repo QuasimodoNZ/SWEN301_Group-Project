@@ -12,4 +12,5 @@ urlpatterns = patterns('',
 #     url(r'^cities-and-companies/$', login_required(views.CityAndCompanyView.as_view()), name='city_and_company'),
     url(r'^cities-and-companies/$', login_required(views.add_cities_and_companies), name='city_and_company'),
     url(r'^xml/$', login_required(views.get_xml), name='xml'),
+    url(r'^event-log/$', login_required(views.EventLogView.as_view()), name='event_log'),
 )
