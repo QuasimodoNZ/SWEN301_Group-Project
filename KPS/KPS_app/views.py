@@ -15,12 +15,12 @@ class Dashboard(TemplateView):
     def get_context_data(self, **kwargs):
         rtn = TemplateView.get_context_data(self, **kwargs)
         rtn['revenue'] = 21564
-        rtn['expenditure'] =  654
+        rtn['expenditure'] = 654
         rtn['event_total'] = len(get_event_log())
-        rtn['table1'] = [("Wellington",   "Wellington", "Land", "456", "127"),
-                         ("Wellington",   "Auckland",   "Air",  "789", "180"),
-                         ("Christchurch", "Auckland",   "Sea",  "3432", "1258"),
-                         ("Wellington",   "Auckland",   "Land", "2432",  "565")]
+        rtn['table1'] = [("Wellington", "Wellington", "Land", "456", "127"),
+                         ("Wellington", "Auckland", "Air", "789", "180"),
+                         ("Christchurch", "Auckland", "Sea", "3432", "1258"),
+                         ("Wellington", "Auckland", "Land", "2432", "565")]
         return rtn
     
 class EventLogView(TemplateView):
@@ -29,24 +29,35 @@ class EventLogView(TemplateView):
     def get_context_data(self, **kwargs):
         rtn = TemplateView.get_context_data(self, **kwargs)
         events = get_event_log()
-        
+        counter = 0
         log = []
         for event in events:
-            d = {'time':event.recorded_time.strftime('%Y/%m%d %H:%M'), 'link':str(event)}
+            d = {'time':event.recorded_time.strftime('%Y/%m/%d %H:%M'), 'link':str(event), 'id':counter}
+            
             if type(event) == models.TransportCostUpdate:
                 d['type'] = 'Transport Cost Update'
-                d['summary'] = ['Company: {}, Duration: {}, Frequency: , Weight Cost: {},  Volume Cost: {}, Max Weight: {}, Max Volume: {}'.format(
-                                event.company, event.duration, event.frequency.weight_cost, event.max_weight, event.volume_cost, event.max_volume)]
+                d['details'] = {
+                    'Company':event.company , 'Duration': event.duration,
+                    'Frequency': event.frequency, 'Weight Cost':event.weight_cost,
+                    'Volume Cost':event.volume_cost , 'Max Weight': event.max_weight,
+                    'Max Volume': event.max_volume
+                }
             elif type(event) == models.TransportDiscontinued:
                 d['type'] = 'Transport Discontinued'
+                d['details'] = {'Company':event.company}
             elif type(event) == models.MailDelivery:
                 d['type'] = 'Mail Delivery'
+                d['details'] = {'Weight': event.weight, 'Volume': event.volume}
             elif type(event) == models.PriceUpdate:
                 d['type'] = 'Price Update'
+                d['details'] = {'Weight Cost':event.weight_cost, 'Volume Cost':event.volume_cost}
             else:
                 # 
                 continue
+            counter += 1
             log.append(d)
+        rtn['log'] = log
+        return rtn
 
     
 class DeliverMail(CreateView):
@@ -92,8 +103,8 @@ def add_cities_and_companies(request):
 class Network():
     def __init__(self, time=None):
         
-        self.nodes = {} # {models.City -> [models.TransportCostUpdate]
-        self.links = {} # {(from, to, company, type) -> models.TransportCostUpdate}
+        self.nodes = {}  # {models.City -> [models.TransportCostUpdate]
+        self.links = {}  # {(from, to, company, type) -> models.TransportCostUpdate}
 
         self.update(get_event_log(time))
         
@@ -101,7 +112,7 @@ class Network():
         for event in events:
             if type(event) == models.TransportCostUpdate:
                 t = as_tuple(event)
-                if t in self.links: # we are updating a transport cost must update the node list
+                if t in self.links:  # we are updating a transport cost must update the node list
                     node_links = self.nodes[event.from_city]
                     for i, tcu in enumerate(node_links):
                         if as_tuple(tcu) == t:
@@ -120,7 +131,7 @@ class Network():
                     self.nodes[event.to_city].append(event)
                 self.links[t] = event
 
-            elif type(event) == models.TransportDiscontinued: # got to remove it from the network
+            elif type(event) == models.TransportDiscontinued:  # got to remove it from the network
                 self.links.pop(as_tuple(event), None)
                 self.nodes[event.to_city].remove(event)
                 self.nodes[event.from_city].remove(event)
@@ -132,10 +143,10 @@ class Network():
         '''Return list of TransportUpdateCost'''
         
         for links in self.nodes.itervalues():
-            links.sort(key=lambda x: x.volume_cost*x.weight_cost)
+            links.sort(key=lambda x: x.volume_cost * x.weight_cost)
         
         visited = []
-        queue = [(0, source, None, None)] # [(priority or cost int, node City, from tuple, using TransportRoute), ...]
+        queue = [(0, source, None, None)]  # [(priority or cost int, node City, from tuple, using TransportRoute), ...]
         while len(queue) > 0:
             t = queue.pop(0)
             if t[1] == destination:
@@ -147,10 +158,10 @@ class Network():
             elif t[1] in visited:
                 continue
             visited.append(t)
-            if t[1] not in self.nodes: # actually only happens at the very start
+            if t[1] not in self.nodes:  # actually only happens at the very start
                 continue
             for link in self.nodes[t[1]]:
-                queue.append((t[0] + link.volume_cost*link.weight_cost, link.get_opposite(t[1]), t, link))
+                queue.append((t[0] + link.volume_cost * link.weight_cost, link.get_opposite(t[1]), t, link))
             queue.sort()
         
         # Mustn't have found a path 

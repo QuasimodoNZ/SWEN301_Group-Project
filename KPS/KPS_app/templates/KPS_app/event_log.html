@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<head>
+<link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<style>
+.hiddenRow {
+    padding: 0 !important;
+}
+</style>
+</head>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script type="text/javascript">
+// $(document).ready(function(){ 
+//     $("#main_tabs a").click(function(e){
+//     	e.preventDefault();
+//     	$(this).tab('show');
+//     });
+// });
+</script>
+<h1>Event Log</h1>
+<h2>Click on a row for more info</h2>
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>Recorded Time</th>
+			<th>Event Type</th>
+			<th>Link</th>
+		</tr>
+	</thead>
+    {% for event in log %}
+    	<tr data-toggle="collapse" data-target="#{{ event.id }}" class="accordion-toggle">
+    		<td>{{event.time}}</td>
+    		<td>{{event.type}}</td>
+    		<td>{{event.link}}</td>
+    	</tr>
+    	<tr>
+   			<td colspan="3" class="hiddenRow">
+	    		<div class="accordion-body collapse" id="{{ event.id }}">
+    				{% for stat_name, value in event.details.items %}
+    					<p>{{ stat_name }}: {{ value }}</p>
+    				{% endfor %} 
+	    		</div>
+			</td>
+    	</tr>
+    {% empty %}
+    	<p>You need to add some events through the link above or through the administration</p>
+    {% endfor %}
+</table>
+
+<script type="text/javascript>
+$(function() {
+    $("td[colspan=3]").find("p").hide();
+    $("table").click(function(event) {
+        event.stopPropagation();
+        var $target = $(event.target);
+        if ( $target.closest("td").attr("colspan") > 1 ) {
+            $target.slideUp();
+            $target.closest("tr").prev().find("td:first").html("+");
+        } else {
+            $target.closest("tr").next().find("p").slideToggle();
+            if ($target.closest("tr").find("td:first").html() == "+")
+                $target.closest("tr").find("td:first").html("-");
+            else
+                $target.closest("tr").find("td:first").html("+");                
+        }                    
+    });
+});
+</script>
+
+{% endblock %}
