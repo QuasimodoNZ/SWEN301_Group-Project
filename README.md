@@ -27,3 +27,9 @@ From the root directory in a command line ```python /KPS/manage.py runserver [po
 
 
 From a webbrowser go to ```localhost:[port no.]```, if no port number is entered then the default is 8000.If something is already using that port then have a look at the terminal as it will show the port number.
+
+Username: admin
+Password: admin
+
+PS you can edit things through the administration area if you have permissions
+This includes users and their permissions.
