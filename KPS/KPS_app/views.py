@@ -24,7 +24,6 @@ class Dashboard(TemplateView):
                          ("Christchurch", "Auckland", "Sea", "3432", "1258"),
                          ("Wellington", "Auckland", "Land", "2432", "565")]
         return rtn
-<<<<<<< HEAD
     
 class EventLogView(TemplateView):
     template_name = "KPS_app/event_log.html"
@@ -62,13 +61,7 @@ class EventLogView(TemplateView):
         rtn['log'] = log
         return rtn
 
-    
-class DeliverMail(CreateView):
-=======
-
-
 class DeliverMail(FormView):
->>>>>>> mail_delivery_pricing_form
     success_url = '/'
     template_name = 'KPS_app/deliver_mail.html'
     form_class = MailDeliveryForm
@@ -135,15 +128,9 @@ def add_cities_and_companies(request):
 
 class Network():
     def __init__(self, time=None):
-<<<<<<< HEAD
         
         self.nodes = {}  # {models.City -> [models.TransportCostUpdate]
         self.links = {}  # {(from, to, company, type) -> models.TransportCostUpdate}
-=======
-
-        self.nodes = {} # {models.City -> [models.TransportCostUpdate]
-        self.links = {} # {(from, to, company, type) -> models.TransportCostUpdate}
->>>>>>> mail_delivery_pricing_form
 
         self.update(get_event_log(time))
 
@@ -182,13 +169,8 @@ class Network():
         '''Return list of TransportUpdateCost'''
 
         for links in self.nodes.itervalues():
-<<<<<<< HEAD
             links.sort(key=lambda x: x.volume_cost * x.weight_cost)
-        
-=======
-            links.sort(key=lambda x: x.volume_cost*x.weight_cost)
-
->>>>>>> mail_delivery_pricing_form
+            
         visited = []
         queue = [(0, source, None, None)]  # [(priority or cost int, node City, from tuple, using TransportRoute), ...]
         while len(queue) > 0:
