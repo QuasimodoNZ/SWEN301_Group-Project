@@ -16,13 +16,36 @@ class Dashboard(TemplateView):
 
     def get_context_data(self, **kwargs):
         rtn = TemplateView.get_context_data(self, **kwargs)
-        rtn['revenue'] = 21564
-        rtn['expenditure'] = 654
+        rtn['revenue'] = 0
+        rtn['expenditure'] = 0
         rtn['event_total'] = len(get_event_log())
-        rtn['table1'] = [("Wellington", "Wellington", "Land", "456", "127"),
-                         ("Wellington", "Auckland", "Air", "789", "180"),
-                         ("Christchurch", "Auckland", "Sea", "3432", "1258"),
-                         ("Wellington", "Auckland", "Land", "2432", "565")]
+        
+        pricings = {}
+        for pricing in models.PriceUpdate.objects.all():
+            
+            duration = sum( d.duration for d in Network(pricing.recorded_time).find_path(
+                pricing.from_city, pricing.to_city, pricing.priority))
+            pricings[pricing] = {'duration':duration, 'revenue':0, 'expenditure':0}
+        
+        for mail in models.MailDelivery.objects.all():
+            revenue, expenditure, pricing = get_revenue_expenditure_pricing(mail)
+            if revenue == None:
+                # we didn't find a suitable pricing or path for the mail
+                continue
+            rtn['revenue'] += revenue
+            pricings[pricing]['revenue'] += revenue
+            rtn['expenditure'] += expenditure
+            pricings[pricing]['expenditure'] += expenditure
+            
+        rtn['customer_pricings'] = []
+        for pricing, dre in pricings.iteritems():
+            rtn['customer_pricings'].append({
+                'from':pricing.from_city, 'to':pricing.to_city, 'priority':pricing.priority,
+                'revenue':dre['revenue'], 'expenditure':dre['expenditure'],
+                'duration':dre['duration'],
+                'status': 'warning' if dre['expenditure'] > dre['revenue'] else ''
+                })        
+        
         return rtn
     
 class EventLogView(TemplateView):
@@ -87,7 +110,9 @@ class TransportUpdate(CreateView):
     success_url = '/'
     template_name = 'KPS_app/transport_update.html'
     model = models.TransportCostUpdate
-    fields = ['from_city', 'to_city', 'priority', 'company', 'weight_cost', 'volume_cost', 'max_weight', 'max_volume', 'duration', 'frequency', 'day', 'is_active']
+    fields = ['from_city', 'to_city', 'priority', 'company', 'weight_cost',
+        'volume_cost', 'max_weight', 'max_volume', 'duration', 'frequency',
+        'day', 'is_active']
 
 class TransportDiscontinued(FormView):
     success_url = '/'
@@ -170,7 +195,7 @@ class Network():
 
         for links in self.nodes.itervalues():
             links.sort(key=lambda x: x.volume_cost * x.weight_cost)
-            
+
         visited = []
         queue = [(0, source, None, None)]  # [(priority or cost int, node City, from tuple, using TransportRoute), ...]
         while len(queue) > 0:
@@ -209,20 +234,32 @@ def get_event_log(time=None):
 
     return events
 
-def get_revenue_cost(delivery):
+def get_revenue_expenditure_pricing(delivery):
     prices = models.PriceUpdate.objects.filter(recorded_time__lte=delivery.recorded_time).order_by('recorded_time').reverse()
     # find the revenue
     for price in prices:
         if (delivery.from_city, delivery.to_city, delivery.priority) == (price.from_city, price.to_city, price.priority):
-            return delivery.weight * price.weight_cost + delivery.volume * price.volume_cost
 
+            revenue = delivery.weight * price.weight_cost + delivery.volume * price.volume_cost
+            pricing = price
+            break
+    
+    if 'revenue' not in locals():
+        # it couldnt find a suitable pricing. need to do the invalidation tasks
+        return None, None, None
+        
+    
     ###### find the cost
     # find path at that time
     path = Network(delivery.recorded_time).find_path(delivery.from_city, delivery.to_city, delivery.priority)
-
+    if path == None:
+        # no path was found, need to complete the invalidation tasks
+        return None, None, None
+    
     # move across path calculating cost
     expenditure = sum(delivery.weight * p.weight_cost + delivery.volume * p.volume_cost for p in  path)
-
+    
+    return revenue, expenditure, pricing
 
 def get_xml(request):
     xml = ("<events>" +
@@ -233,3 +270,4 @@ def get_xml(request):
         "</events>"
     )
     return HttpResponse(xml)
+

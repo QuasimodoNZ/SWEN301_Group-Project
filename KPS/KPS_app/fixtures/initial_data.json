@@ -1,0 +1,199 @@
+[
+{
+    "fields": {
+        "city_name": "Wellington"
+    },
+    "model": "KPS_app.city",
+    "pk": 1
+},
+{
+    "fields": {
+        "city_name": "Auckland"
+    },
+    "model": "KPS_app.city",
+    "pk": 2
+},
+{
+    "fields": {
+        "city_name": "Christchurch"
+    },
+    "model": "KPS_app.city",
+    "pk": 3
+},
+{
+    "fields": {
+        "city_name": "Hamilton"
+    },
+    "model": "KPS_app.city",
+    "pk": 4
+},
+{
+    "fields": {
+        "city_name": "Taupo"
+    },
+    "model": "KPS_app.city",
+    "pk": 5
+},
+{
+    "fields": {
+        "company_name": "Franks Freighting"
+    },
+    "model": "KPS_app.company",
+    "pk": 1
+},
+{
+    "fields": {
+        "volume": 100,
+        "priority": "Land",
+        "weight": 100,
+        "to_city": 2,
+        "from_city": 1,
+        "recorded_time": "2015-05-30T02:32:20.570Z"
+    },
+    "model": "KPS_app.maildelivery",
+    "pk": 6
+},
+{
+    "fields": {
+        "volume": 100,
+        "priority": "Land",
+        "weight": 100,
+        "to_city": 1,
+        "from_city": 4,
+        "recorded_time": "2015-05-29T14:46:20.462Z"
+    },
+    "model": "KPS_app.maildelivery",
+    "pk": 7
+},
+{
+    "fields": {
+        "volume": 20,
+        "priority": "Land",
+        "weight": 5,
+        "to_city": 5,
+        "from_city": 2,
+        "recorded_time": "2015-06-02T13:12:07.155Z"
+    },
+    "model": "KPS_app.maildelivery",
+    "pk": 8
+},
+{
+    "fields": {
+        "priority": "Land",
+        "max_volume": 2000,
+        "volume_cost": 5,
+        "company": 1,
+        "is_active": false,
+        "day": "Monday",
+        "to_city": 4,
+        "frequency": 24,
+        "from_city": 2,
+        "duration": 10,
+        "weight_cost": 5,
+        "recorded_time": "2015-05-29T14:10:16.935Z",
+        "max_weight": 2000
+    },
+    "model": "KPS_app.transportcostupdate",
+    "pk": 1
+},
+{
+    "fields": {
+        "priority": "Land",
+        "max_volume": 2000,
+        "volume_cost": 3,
+        "company": 1,
+        "is_active": false,
+        "day": "Tuesday",
+        "to_city": 5,
+        "frequency": 24,
+        "from_city": 2,
+        "duration": 10,
+        "weight_cost": 3,
+        "recorded_time": "2015-05-29T14:10:54.208Z",
+        "max_weight": 2000
+    },
+    "model": "KPS_app.transportcostupdate",
+    "pk": 2
+},
+{
+    "fields": {
+        "priority": "Land",
+        "max_volume": 5000,
+        "volume_cost": 5,
+        "company": 1,
+        "is_active": false,
+        "day": "Tuesday",
+        "to_city": 1,
+        "frequency": 24,
+        "from_city": 5,
+        "duration": 5,
+        "weight_cost": 5,
+        "recorded_time": "2015-05-29T14:12:25.383Z",
+        "max_weight": 5000
+    },
+    "model": "KPS_app.transportcostupdate",
+    "pk": 3
+},
+{
+    "fields": {
+        "priority": "Land",
+        "max_volume": 5000,
+        "volume_cost": 3,
+        "company": 1,
+        "is_active": false,
+        "day": "Friday",
+        "to_city": 1,
+        "frequency": 24,
+        "from_city": 4,
+        "duration": 5,
+        "weight_cost": 3,
+        "recorded_time": "2015-05-29T14:12:56.189Z",
+        "max_weight": 5000
+    },
+    "model": "KPS_app.transportcostupdate",
+    "pk": 4
+},
+{
+    "fields": {
+        "priority": "Land",
+        "max_volume": 10000,
+        "volume_cost": 1,
+        "company": 1,
+        "is_active": false,
+        "day": "Monday",
+        "to_city": 5,
+        "frequency": 24,
+        "from_city": 4,
+        "duration": 5,
+        "weight_cost": 1,
+        "recorded_time": "2015-05-29T14:13:22.201Z",
+        "max_weight": 10000
+    },
+    "model": "KPS_app.transportcostupdate",
+    "pk": 5
+},
+{
+    "fields": {
+        "priority": "Land",
+        "volume_cost": 10,
+        "to_city": 2,
+        "from_city": 1,
+        "weight_cost": 10,
+        "recorded_time": "2015-05-29T14:14:04.745Z"
+    },
+    "model": "KPS_app.priceupdate",
+    "pk": 1
+},
+{
+    "fields": {
+        "priority": "Land",
+        "volume_cost": 1,
+        "to_city": 1,
+        "from_city": 4,
+        "weight_cost": 1,
+        "recorded_time": "2015-05-29T14:46:05.786Z"
+    },
+    "model": "KPS_app.priceupdate",
+    "pk": 2
+}
+]

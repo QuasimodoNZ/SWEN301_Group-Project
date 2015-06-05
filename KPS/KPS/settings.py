@@ -105,3 +105,5 @@ USE_L10N = True
 
 STATIC_URL = '/static/'
 LOGIN_URL = '/admin/login/'
+
+#FIXTURE_DIRS = ('/KPS_app/fixtures/')
