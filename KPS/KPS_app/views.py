@@ -1,5 +1,5 @@
 from django.views.generic.base import TemplateView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, FormView
 from KPS_app import models
 from datetime import datetime
 from KPS_app.forms import CityForm, CompanyForm, MailDeliveryForm
@@ -26,26 +26,21 @@ class Dashboard(TemplateView):
         return rtn
 
 
-# class DeliverMail(CreateView):
-#     success_url = '/'
-#     template_name = 'KPS_app/deliver_mail.html'
-#     model = models.MailDelivery
-#     fields = ['from_city', 'to_city', 'priority', 'weight', 'volume']
+class DeliverMail(FormView):
+    success_url = '/'
+    template_name = 'KPS_app/deliver_mail.html'
+    form_class = MailDeliveryForm
 
-def delivery_mail(request):
-    price_updates = models.PriceUpdate.objects.all()
-    if request.method == "POST":
-        print("POST REQUEST: ")
-        print(request.POST)
-        print("*************")
-        mail_delivery_form = MailDeliveryForm(request.POST, instance=models.MailDelivery())
-        if mail_delivery_form.is_valid():
-            if not request.POST['delivery_form'] == '' and len(models.MailDelivery.objects.filter(weight=request.POST['weight'])) == 0 and len(models.MailDelivery.objects.filter(volume=request.POST['volume'])) == 0:
-                mail_delivery_form.save()
-            return HttpResponseRedirect('/')
-    else:
-        mail_delivery_form = MailDeliveryForm(instance=models.MailDelivery())
-    return render_to_response('KPS_app/deliver_mail.html', {'price_updates_selection': price_updates, 'delivery_form': mail_delivery_form}, RequestContext(request))
+    def form_valid(self, form):
+        price_update_selection = self.request.POST['price_update']
+        price_update_selection = models.PriceUpdate.objects.get(pk=price_update_selection)
+        mail = models.MailDelivery(weight = self.request.POST['weight'],
+            volume = self.request.POST['volume'],
+            to_city = price_update_selection.to_city,
+            from_city = price_update_selection.from_city,
+            priority = price_update_selection.priority)
+        mail.save()
+        return HttpResponseRedirect(self.success_url)
 
 class CustomerUpdate(CreateView):
     success_url = '/'
