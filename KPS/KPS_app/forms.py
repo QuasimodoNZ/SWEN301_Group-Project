@@ -5,6 +5,8 @@ Created on 25/05/2015
 '''
 from django import forms
 from KPS_app import models
+from datetime import datetime
+from django.forms.fields import ChoiceField
 
 class CityForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -32,5 +34,16 @@ class MailDeliveryForm(forms.ModelForm):
         model = models.MailDelivery
         fields = ['weight', 'volume']
 
-def get_price_choices():
-    return ((pu.pk, str(pu)) for pu in models.PriceUpdate.objects.all())
+class TransportDiscontinueForm(forms.ModelForm):
+    transport_update = ChoiceField(choices=(-1,'Error: No choices available'), required=True)
+
+    def __init__(self, link_choices, *args, **kwargs):
+        super(TransportDiscontinueForm, self).__init__(*args, **kwargs)
+        if link_choices:
+            self.fields['transport_update'].choices = link_choices
+
+    class Meta:
+        model = models.TransportDiscontinued
+        fields = []
+
+

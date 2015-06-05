@@ -2,13 +2,13 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, FormView
 from KPS_app import models
 from datetime import datetime
-from KPS_app.forms import CityForm, CompanyForm, MailDeliveryForm
+from KPS_app.forms import CityForm, CompanyForm, MailDeliveryForm,\
+    TransportDiscontinueForm
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core import serializers
 from django.http import HttpResponse
-from collections import deque
 
 # Create your views here.
 class Dashboard(TemplateView):
@@ -54,11 +54,27 @@ class TransportUpdate(CreateView):
     model = models.TransportCostUpdate
     fields = ['from_city', 'to_city', 'priority', 'company', 'weight_cost', 'volume_cost', 'max_weight', 'max_volume', 'duration', 'frequency', 'day', 'is_active']
 
-class TransportDiscontinued(CreateView):
+class TransportDiscontinued(FormView):
     success_url = '/'
     template_name = 'KPS_app/transport_discontinue.html'
-    model = models.TransportDiscontinued
-    fields = ['from_city', 'to_city', 'priority', 'company']
+    form_class = TransportDiscontinueForm
+
+    def get_form(self, form_class=None):
+        
+        return TransportDiscontinueForm(((link.pk, '{} {}'.format(link.company, str(link))) for link in Network().links.values()))
+        
+
+    def form_valid(self, form):
+        transport_update = self.request.POST['transport_update']
+        transport_update = models.TransportCostUpdate.objects.get(pk=transport_update)
+        discontinue = models.TransportDiscontinued(
+            from_city=transport_update.from_city,
+            to_city=transport_update.to_city,
+            priority=transport_update.priority,
+            company=transport_update.company
+        )
+        discontinue.save()
+        return HttpResponseRedirect(self.success_url)
 
 def add_cities_and_companies(request):
     if request.method == "POST":
