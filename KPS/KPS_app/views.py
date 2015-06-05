@@ -1,19 +1,19 @@
 from django.views.generic.base import TemplateView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, FormView
 from KPS_app import models
 from datetime import datetime
-from KPS_app.forms import CityForm, CompanyForm
+from KPS_app.forms import CityForm, CompanyForm, MailDeliveryForm,\
+    TransportDiscontinueForm
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core import serializers
 from django.http import HttpResponse
-from collections import deque
 
 # Create your views here.
 class Dashboard(TemplateView):
     template_name = "KPS_app/dashboard.html"
-    
+
     def get_context_data(self, **kwargs):
         rtn = TemplateView.get_context_data(self, **kwargs)
         rtn['revenue'] = 21564
@@ -24,6 +24,7 @@ class Dashboard(TemplateView):
                          ("Christchurch", "Auckland", "Sea", "3432", "1258"),
                          ("Wellington", "Auckland", "Land", "2432", "565")]
         return rtn
+<<<<<<< HEAD
     
 class EventLogView(TemplateView):
     template_name = "KPS_app/event_log.html"
@@ -63,32 +64,62 @@ class EventLogView(TemplateView):
 
     
 class DeliverMail(CreateView):
+=======
+
+
+class DeliverMail(FormView):
+>>>>>>> mail_delivery_pricing_form
     success_url = '/'
     template_name = 'KPS_app/deliver_mail.html'
-    model = models.MailDelivery
-    fields = ['from_city', 'to_city', 'priority', 'weight', 'volume']
-    
+    form_class = MailDeliveryForm
+
+    def form_valid(self, form):
+        price_update_selection = self.request.POST['price_update']
+        price_update_selection = models.PriceUpdate.objects.get(pk=price_update_selection)
+        mail = models.MailDelivery(weight = self.request.POST['weight'],
+            volume = self.request.POST['volume'],
+            to_city = price_update_selection.to_city,
+            from_city = price_update_selection.from_city,
+            priority = price_update_selection.priority)
+        mail.save()
+        return HttpResponseRedirect(self.success_url)
+
 class CustomerUpdate(CreateView):
     success_url = '/'
     template_name = 'KPS_app/customer_update.html'
     model = models.PriceUpdate
     fields = ['from_city', 'to_city', 'priority', 'weight_cost', 'volume_cost']
-    
+
 class TransportUpdate(CreateView):
     success_url = '/'
     template_name = 'KPS_app/transport_update.html'
     model = models.TransportCostUpdate
     fields = ['from_city', 'to_city', 'priority', 'company', 'weight_cost', 'volume_cost', 'max_weight', 'max_volume', 'duration', 'frequency', 'day', 'is_active']
 
-class TransportDiscontinued(CreateView):
+class TransportDiscontinued(FormView):
     success_url = '/'
     template_name = 'KPS_app/transport_discontinue.html'
-    model = models.TransportDiscontinued
-    fields = ['from_city', 'to_city', 'priority', 'company']
+    form_class = TransportDiscontinueForm
+
+    def get_form(self, form_class=None):
+        
+        return TransportDiscontinueForm(((link.pk, '{} {}'.format(link.company, str(link))) for link in Network().links.values()))
+        
+
+    def form_valid(self, form):
+        transport_update = self.request.POST['transport_update']
+        transport_update = models.TransportCostUpdate.objects.get(pk=transport_update)
+        discontinue = models.TransportDiscontinued(
+            from_city=transport_update.from_city,
+            to_city=transport_update.to_city,
+            priority=transport_update.priority,
+            company=transport_update.company
+        )
+        discontinue.save()
+        return HttpResponseRedirect(self.success_url)
 
 def add_cities_and_companies(request):
     if request.method == "POST":
-        print(request.POST)
         city_form = CityForm(request.POST, instance=models.City())
         company_form = CompanyForm(request.POST, instance=models.Company())
         if city_form.is_valid() and company_form.is_valid():
@@ -104,12 +135,18 @@ def add_cities_and_companies(request):
 
 class Network():
     def __init__(self, time=None):
+<<<<<<< HEAD
         
         self.nodes = {}  # {models.City -> [models.TransportCostUpdate]
         self.links = {}  # {(from, to, company, type) -> models.TransportCostUpdate}
+=======
+
+        self.nodes = {} # {models.City -> [models.TransportCostUpdate]
+        self.links = {} # {(from, to, company, type) -> models.TransportCostUpdate}
+>>>>>>> mail_delivery_pricing_form
 
         self.update(get_event_log(time))
-        
+
     def update(self, events):
         for event in events:
             if type(event) == models.TransportCostUpdate:
@@ -118,12 +155,12 @@ class Network():
                     node_links = self.nodes[event.from_city]
                     for i, tcu in enumerate(node_links):
                         if as_tuple(tcu) == t:
-                            node_links[i] = event    
+                            node_links[i] = event
                     node_links = self.nodes[event.to_city]
                     for i, tcu in enumerate(node_links):
                         if as_tuple(tcu) == t:
                             node_links[i] = event
-                            
+
                 else:
                     if event.from_city not in self.nodes:
                         self.nodes[event.from_city] = []
@@ -137,16 +174,21 @@ class Network():
                 self.links.pop(as_tuple(event), None)
                 self.nodes[event.to_city].remove(event)
                 self.nodes[event.from_city].remove(event)
-                
+
             else:
                 print('I don\'t know what this model is: {}'.format(event))
-        
+
     def find_path(self, source, destination, priority):
         '''Return list of TransportUpdateCost'''
-        
+
         for links in self.nodes.itervalues():
+<<<<<<< HEAD
             links.sort(key=lambda x: x.volume_cost * x.weight_cost)
         
+=======
+            links.sort(key=lambda x: x.volume_cost*x.weight_cost)
+
+>>>>>>> mail_delivery_pricing_form
         visited = []
         queue = [(0, source, None, None)]  # [(priority or cost int, node City, from tuple, using TransportRoute), ...]
         while len(queue) > 0:
@@ -165,24 +207,24 @@ class Network():
             for link in self.nodes[t[1]]:
                 queue.append((t[0] + link.volume_cost * link.weight_cost, link.get_opposite(t[1]), t, link))
             queue.sort()
-        
-        # Mustn't have found a path 
+
+        # Mustn't have found a path
         return None
-                                
+
 def as_tuple(event):
     return (event.from_city, event.to_city, event.company, event.priority)
-        
+
 def get_event_log(time=None):
     if time == None:
         time = datetime.now()
-    
+
     deliveries = models.MailDelivery.objects.filter(recorded_time__lte=time)
     prices = models.PriceUpdate.objects.filter(recorded_time__lte=time)
     costs = models.TransportCostUpdate.objects.filter(recorded_time__lte=time)
     discontinues = models.TransportDiscontinued.objects.filter(recorded_time__lte=time)
-    
+
     events = sorted(list(deliveries) + list(prices) + list(costs) + list(discontinues), key=lambda event: event.recorded_time, reverse=True)
-        
+
     return events
 
 def get_revenue_cost(delivery):
@@ -191,17 +233,17 @@ def get_revenue_cost(delivery):
     for price in prices:
         if (delivery.from_city, delivery.to_city, delivery.priority) == (price.from_city, price.to_city, price.priority):
             return delivery.weight * price.weight_cost + delivery.volume * price.volume_cost
-    
+
     ###### find the cost
     # find path at that time
     path = Network(delivery.recorded_time).find_path(delivery.from_city, delivery.to_city, delivery.priority)
-    
+
     # move across path calculating cost
     expenditure = sum(delivery.weight * p.weight_cost + delivery.volume * p.volume_cost for p in  path)
-    
+
 
 def get_xml(request):
-    xml = ("<events>" + 
+    xml = ("<events>" +
         serializers.serialize('xml', models.MailDelivery.objects.all()) +
         serializers.serialize('xml', models.TransportCostUpdate.objects.all()) +
         serializers.serialize('xml', models.PriceUpdate.objects.all()) +
