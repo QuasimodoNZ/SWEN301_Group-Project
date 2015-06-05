@@ -113,7 +113,7 @@ class TransportUpdate(CreateView):
     model = models.TransportCostUpdate
     fields = ['from_city', 'to_city', 'priority', 'company', 'weight_cost',
         'volume_cost', 'max_weight', 'max_volume', 'duration', 'frequency',
-        'day', 'is_active']
+        'day']
 
 class TransportDiscontinued(FormView):
     success_url = '/'
