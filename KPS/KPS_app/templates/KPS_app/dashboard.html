@@ -9,6 +9,8 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script src="http://d3js.org/d3.v3.js"></script>
+<script type="text/javascript" src="scripts/radialProgress.js"></script>
+
 </head>
 
 <html lang="en">
@@ -50,10 +52,10 @@
 				<a data-toggle="tab" href="#average_delivery_times">Events</a>
 			</li>
 			<li>
-				<a data-toggle="tab" href="#critical_route_table">Critical Routes </a>
+				<a data-toggle="tab" href="#critical_route_table">Critical Routes</a>
 			</li>
 			<li>
-				<a data-toggle="tab" href="#revenue_vs_expenditure_graph">Revenue Vs. Expenditure </a>
+				<a data-toggle="tab" href="#revenue_vs_expenditure_graph">Expenditure Vs. Revenue</a>
 			</li>
 		</ul>
 	</div>
@@ -104,7 +106,89 @@
 			</table>
 		</div>
 		<div id="revenue_vs_expenditure_graph" class="tab-pane fade">
-			
+			<div class="row-fluid">
+				<div class="col-md-6">
+					<div id="graph"></div>
+				</div>
+				<div class="col-md-6">
+					<div id="info"></div>
+				</div>
+			</div>
+			<script>
+
+				var exp = "{{expenditure}}"
+				var rev = "{{revenue}}"
+				var data = [exp,rev];
+
+				var r = 100;
+				var color = d3.scale.ordinal()	
+					.range(["red", "green"]);
+
+				var canvas = d3.select("#graph").append("svg")
+					.attr("width", 500)
+					.attr("height", 500);
+
+				var canvas_info = d3.select("#info").append("svg")
+					.attr("width", 500)
+					.attr("height", 500);
+
+
+				var group = canvas.append("g")
+					.attr("transform", "translate(250,250)");
+
+				var arc = d3.svg.arc()
+					.innerRadius(200)
+					.outerRadius(r);
+
+				var pie = d3.layout.pie()
+					.value(function (d) {return d; });
+
+				var arcs = group.selectAll(".arc")
+					.data(pie(data))
+					.enter()
+					.append("g")
+					.attr("class","arc");
+
+				arcs.append("path")
+					.attr("d", arc)
+					.attr("fill", function (d) { return color(d.data); });
+
+				arcs.append("text")
+					.attr("transform",function (d) {return "translate("+arc.centroid(d) +")"})
+					.attr("text-anchor","middle")
+					.text(function (d) {return "$"+ d.data;});
+
+
+				var expend = canvas_info.append("g")
+				.attr("transform", "translate(60,80)")
+				.append("rect")
+					.attr("x", 10)
+					.attr("y", 10)
+					.attr("width", 30)
+					.attr("height",30)
+					.attr("fill", "red");
+
+
+				canvas_info.append("text")
+					.attr("transform", "translate(80,80)")
+					.attr("text-anchor","middle")
+					.text("Total Expenditure key:");
+
+				var reven = canvas_info.append("g")
+				.attr("transform", "translate(60,180)")
+				.append("rect")
+					.attr("x", 10)
+					.attr("y", 10)
+					.attr("width", 30)
+					.attr("height",30)
+					.attr("fill", "green");
+
+				canvas_info.append("text")
+					.attr("transform", "translate(80,180)")
+					.attr("text-anchor","middle")
+					.text("Total Revenue key:");
+
+			</script>
 		</div>
 	</div>
 </body>
