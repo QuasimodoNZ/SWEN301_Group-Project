@@ -23,6 +23,31 @@ class Dashboard(TemplateView):
                          ("Wellington",   "Auckland",   "Land", "2432",  "565")]
         return rtn
     
+class EventLogView(TemplateView):
+    template_name = "KPS_app/event_log.html"
+    
+    def get_context_data(self, **kwargs):
+        rtn = TemplateView.get_context_data(self, **kwargs)
+        events = get_event_log()
+        
+        log = []
+        for event in events:
+            d = {'time':event.recorded_time.strftime('%Y/%m%d %H:%M'), 'link':str(event)}
+            if type(event) == models.TransportCostUpdate:
+                d['type'] = 'Transport Cost Update'
+                d['summary'] = ['Company: {}, Duration: {}, Frequency: , Weight Cost: {},  Volume Cost: {}, Max Weight: {}, Max Volume: {}'.format(
+                                event.company, event.duration, event.frequency.weight_cost, event.max_weight, event.volume_cost, event.max_volume)]
+            elif type(event) == models.TransportDiscontinued:
+                d['type'] = 'Transport Discontinued'
+            elif type(event) == models.MailDelivery:
+                d['type'] = 'Mail Delivery'
+            elif type(event) == models.PriceUpdate:
+                d['type'] = 'Price Update'
+            else:
+                # 
+                continue
+            log.append(d)
+
     
 class DeliverMail(CreateView):
     success_url = '/'
