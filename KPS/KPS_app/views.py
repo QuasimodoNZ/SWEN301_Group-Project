@@ -19,6 +19,7 @@ class Dashboard(TemplateView):
         rtn['revenue'] = 0
         rtn['expenditure'] = 0
         rtn['event_total'] = len(get_event_log())
+        rtn['mail_total'] = len(models.MailDelivery.objects.all())
         
         pricings = {}
         for pricing in models.PriceUpdate.objects.all():
